@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/{{damiankoper}}/{{hhapp-device-protocol}}.svg?branch=master)](https://travis-ci.org/{{github-user-name}}/{{github-app-name}}.svg?branch=master)
+[![Build Status](https://travis-ci.org/damiankoper/hhapp-device-protocol.svg?branch=master)](https://travis-ci.org/{{github-user-name}}/{{github-app-name}}.svg?branch=master)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
 # Using this module in other modules
