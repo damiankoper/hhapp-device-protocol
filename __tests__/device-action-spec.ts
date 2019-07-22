@@ -27,21 +27,64 @@ describe('Device test', () => {
     done();
   });
 
-  it('should pass',()=>{
-
-  })
-/*   it('should respond to action sent', async done => {
-
-    let fn = jest.fn()
-    device.on('testaction', fn)
-
+  it('should respond to action sent', async done => {
+    let fn = jest.fn();
+    device.onAction('testaction', fn);
     testServer.on('connection', socket => {
-      expect(fn).toBeCalledTimes(1)
-
-      socket.emit('testaction', { test: 'data' })
-      done()
+      expect(fn).not.toBeCalled();
+      socket.emit('testaction', { test: 'data' });
     });
-
     await device.init();
-  }); */
+    setTimeout(() => {
+      expect(fn).toBeCalled();
+      done()
+    }, 50);
+  });
+
+  it('should turn off action before init handler', async done => {
+    let fn = jest.fn();
+    device.onAction('testaction', fn);
+    device.offAction('testaction');
+    testServer.on('connection', socket => {
+      expect(fn).not.toBeCalled();
+      socket.emit('testaction', { test: 'data' });
+    });
+    await device.init();
+    setTimeout(() => {
+      expect(fn).not.toBeCalled();
+      done()
+    }, 50);
+  });
+
+  it('should turn off action after init handler', async done => {
+    let fn = jest.fn();
+    device.onAction('testaction', fn);
+    testServer.on('connection', socket => {
+      expect(fn).not.toBeCalled();
+      socket.emit('testaction', { test: 'data' });
+    });
+    await device.init();
+    device.offAction('testaction');
+    setTimeout(() => {
+      expect(fn).not.toBeCalled();
+      done();
+    }, 50);
+  });
+
+  it('should respond to action sent and set after init', async done => {
+    let fn = jest.fn();
+    testServer.on('connection', socket => {
+      expect(fn).not.toBeCalled();
+      setTimeout(() => {
+        socket.emit('testaction', { test: 'data' });
+      }, 20);
+    });
+    await device.init();
+    device.onAction('testaction', fn);
+
+    setTimeout(() => {
+      expect(fn).toBeCalled();
+      done();
+    }, 50);
+  });
 });

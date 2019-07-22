@@ -48,8 +48,8 @@ describe('Device test', () => {
       socket.on('disconnect', () => {
         expect(socket.connected).toBeFalsy();
         done();
-      })
-      device.destroy()
+      });
+      device.destroy();
     });
     await device.init();
   });
@@ -60,10 +60,8 @@ describe('Device test', () => {
     testServer.on('connection', socket => {
       socket.on('status', (status: DeviceStatus) => {
         expect(status.payload).toStrictEqual(statusPayload);
-        expect(status.device.name).toMatch(
-          /.{2}:.{2}:.{2}:.{2}:.{2}:.{2}/
-        );
-        expect(status.device.type).toBe('testdevice')
+        expect(status.device.name).toMatch(/.{2}:.{2}:.{2}:.{2}:.{2}:.{2}/);
+        expect(status.device.type).toBe('testdevice');
         done();
       });
       device.sendStatus(statusPayload);
@@ -80,19 +78,19 @@ describe('Device test', () => {
       socket.on('status', (status: DeviceStatus) => {
         expect(status.payload).toStrictEqual(statusPayload);
         if (++counter === 3) {
-          device.autoStatusOff()
-          done()
+          device.autoStatusOff();
+          done();
         }
       });
     });
 
     await device.init();
     device.autoStatusOn(() => {
-      return statusPayload = { test: 'test' };
+      return (statusPayload = { test: 'test' });
     }, 50);
     // New call replaces old interval
     device.autoStatusOn(() => {
-      return statusPayload = { test: 'test' };
+      return (statusPayload = { test: 'test' });
     }, 60);
   });
 });
