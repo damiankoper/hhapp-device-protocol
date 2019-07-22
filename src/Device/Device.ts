@@ -1,7 +1,7 @@
 import * as getmac from 'getmac';
 import io from 'socket.io-client';
-import DeviceStatus from './Status';
-
+import { DeviceStatus } from './Status';
+export { DeviceStatus } from './Status'
 export interface DeviceServerConfig {
   host: string;
   port: number;
@@ -30,14 +30,14 @@ export default class Device {
           let socket = io.connect(
             `http://${serverConfig.host}:${serverConfig.port}`
           );
-          socket.once('connect', function() {
+          socket.once('connect', function () {
             resolve(socket);
           });
-          socket.once('connect_error', function(err: string) {
+          socket.once('connect_error', function (err: string) {
             reject(new Error(err));
           });
-          socket.once('connect_timeout', function() {
-            reject(new Error('connect_timeout'));
+          socket.once('connect_timeout', function (err: string) {
+            reject(new Error(err));
           });
         });
       })
@@ -48,6 +48,7 @@ export default class Device {
     this.sockets.forEach(socket => {
       if (socket.connected) socket.disconnect();
     });
+    this.sockets = []
   }
 
   async getMac() {
@@ -74,7 +75,7 @@ export default class Device {
     if (this.statusInterval) {
       clearInterval(this.statusInterval);
     }
-    this.statusInterval = setInterval(()=>this.sendStatus(statusCallback()), interval);
+    this.statusInterval = setInterval(() => this.sendStatus(statusCallback()), interval);
   }
 
   autoStatusOff() {
@@ -91,3 +92,4 @@ export default class Device {
     });
   }
 }
+

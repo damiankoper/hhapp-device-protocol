@@ -1,3 +1,2 @@
-export * from './greeter';
-export * from './Device/Device';
-export * from './Device/Status';
+export * from './Device/Device'
+export * from './Manager/Manager'

@@ -1,5 +1,5 @@
 import Device from '../src/Device/Device';
-import DeviceStatus from '../src/Device/Status';
+import { DeviceStatus } from '../src/Device/Status';
 import SocketIO from 'socket.io';
 
 describe('Device test', () => {
@@ -39,16 +39,31 @@ describe('Device test', () => {
       expect(socket.connected).toBeTruthy();
       done();
     });
+    await device.init();
+  });
 
+  it('should connect and be destroyed', async done => {
+    testServer.on('connection', socket => {
+      expect(socket.connected).toBeTruthy();
+      socket.on('disconnect', () => {
+        expect(socket.connected).toBeFalsy();
+        done();
+      })
+      device.destroy()
+    });
     await device.init();
   });
 
   it('should send status', async done => {
-    expect.assertions(1);
+    expect.assertions(3);
     let statusPayload: object = { test: 'test' };
     testServer.on('connection', socket => {
       socket.on('status', (status: DeviceStatus) => {
         expect(status.payload).toStrictEqual(statusPayload);
+        expect(status.device.name).toMatch(
+          /.{2}:.{2}:.{2}:.{2}:.{2}:.{2}/
+        );
+        expect(status.device.type).toBe('testdevice')
         done();
       });
       device.sendStatus(statusPayload);
@@ -75,5 +90,9 @@ describe('Device test', () => {
     device.autoStatusOn(() => {
       return statusPayload = { test: 'test' };
     }, 50);
+    // New call replaces old interval
+    device.autoStatusOn(() => {
+      return statusPayload = { test: 'test' };
+    }, 60);
   });
 });
