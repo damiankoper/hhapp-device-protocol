@@ -1,11 +1,13 @@
 import * as getmac from 'getmac';
 import io from 'socket.io-client';
-import { DeviceStatus } from './Status';
+import { DeviceInfo, DeviceStatus } from './Status';
 export { DeviceStatus } from './Status';
 export interface DeviceServerConfig {
   host: string;
   port: number;
 }
+
+type MacAddress = string;
 
 export interface DeviceConfig {
   type: string;
@@ -17,7 +19,8 @@ export default class Device {
   private macAddress!: string;
   private config: DeviceConfig;
   private statusInterval?: NodeJS.Timeout;
-  private actions: Map<string, () => void> = new Map();
+  private actions: Map<MacAddress, (payload: object) => void> = new Map();
+  private statusCallback?: () => object;
 
   constructor(config: DeviceConfig) {
     this.config = config;
@@ -28,8 +31,14 @@ export default class Device {
     this.sockets = await Promise.all(
       this.config.servers.map(serverConfig => {
         return new Promise<SocketIOClient.Socket>((resolve, reject) => {
+          const device = this.getStatusWithPayload({}).device;
           const socket = io.connect(
-            `http://${serverConfig.host}:${serverConfig.port}`
+            `http://${serverConfig.host}:${serverConfig.port}`,
+            {
+              query: {
+                ...device,
+              },
+            }
           );
           socket.once('connect', () => {
             resolve(socket);
@@ -55,14 +64,21 @@ export default class Device {
     this.sockets = [];
   }
 
-  public autoStatusOn(statusCallback: () => object, interval: number) {
+  public setStatusGetter(statusCallback: () => object) {
+    this.statusCallback = statusCallback;
+  }
+
+  public autoStatusOn(interval: number) {
     if (this.statusInterval) {
       clearInterval(this.statusInterval);
     }
-    this.statusInterval = setInterval(
-      () => this.sendStatus(statusCallback()),
-      interval
-    );
+    this.statusInterval = setInterval(() => {
+      if (this.statusCallback) {
+        this.sendStatus(this.statusCallback());
+      } else {
+        throw new Error('Warning! Status getter not set!');
+      }
+    }, interval);
   }
 
   public autoStatusOff() {
@@ -80,7 +96,7 @@ export default class Device {
     });
   }
 
-  public onAction(action: string, fn: () => void) {
+  public onAction(action: string, fn: (payload: object) => void) {
     this.actions.set(action, fn);
     this.sockets.forEach(socket => {
       socket.off(action);
@@ -96,7 +112,7 @@ export default class Device {
   }
 
   public async getMac() {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<MacAddress>((resolve, reject) => {
       getmac.getMac((error, mac) => {
         if (error) {
           reject(error);
@@ -106,12 +122,16 @@ export default class Device {
     });
   }
 
+  private getDeviceInfo(): DeviceInfo {
+    return {
+      name: this.macAddress,
+      type: this.config.type,
+    };
+  }
+
   private getStatusWithPayload(payload: object) {
     const status: DeviceStatus = {
-      device: {
-        name: this.macAddress,
-        type: this.config.type,
-      },
+      device: this.getDeviceInfo(),
       payload,
     };
     return status;

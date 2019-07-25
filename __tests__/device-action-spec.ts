@@ -37,7 +37,7 @@ describe('Device test', () => {
     await device.init();
     setTimeout(() => {
       expect(fn).toBeCalled();
-      done()
+      done();
     }, 50);
   });
 
@@ -52,7 +52,7 @@ describe('Device test', () => {
     await device.init();
     setTimeout(() => {
       expect(fn).not.toBeCalled();
-      done()
+      done();
     }, 50);
   });
 

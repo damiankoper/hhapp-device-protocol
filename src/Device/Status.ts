@@ -1,7 +1,9 @@
+export interface DeviceInfo {
+  type: string;
+  name: string;
+}
+
 export interface DeviceStatus {
-  device: {
-    type: string;
-    name: string;
-  };
+  device: DeviceInfo;
   payload: object;
 }

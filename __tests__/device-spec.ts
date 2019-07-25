@@ -37,6 +37,9 @@ describe('Device test', () => {
   it('should connect', async done => {
     testServer.on('connection', socket => {
       expect(socket.connected).toBeTruthy();
+      expect(socket.handshake.query.name).toMatch(
+        /.{2}:.{2}:.{2}:.{2}:.{2}:.{2}/
+      );
       done();
     });
     await device.init();
@@ -85,12 +88,11 @@ describe('Device test', () => {
     });
 
     await device.init();
-    device.autoStatusOn(() => {
+    device.setStatusGetter(() => {
       return (statusPayload = { test: 'test' });
-    }, 50);
+    });
+    device.autoStatusOn(50);
     // New call replaces old interval
-    device.autoStatusOn(() => {
-      return (statusPayload = { test: 'test' });
-    }, 60);
+    device.autoStatusOn(60);
   });
 });
