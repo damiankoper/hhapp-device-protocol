@@ -5,5 +5,5 @@ export interface DeviceInfo {
 
 export interface DeviceStatus {
   device: DeviceInfo;
-  payload: object;
+  payload: any;
 }

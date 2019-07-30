@@ -2,6 +2,7 @@ import * as getmac from 'getmac';
 import io from 'socket.io-client';
 import { DeviceInfo, DeviceStatus } from './Status';
 export { DeviceStatus } from './Status';
+
 export interface DeviceServerConfig {
   host: string;
   port: number;
