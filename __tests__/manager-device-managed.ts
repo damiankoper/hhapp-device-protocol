@@ -41,8 +41,8 @@ describe('Device managed test', () => {
       });
       expect(deviceManaged).toBeInstanceOf(DeviceManaged);
       expect(deviceManaged.connected()).toEqual(true);
-      
-      deviceManaged.destroy()
+
+      deviceManaged.destroy();
       expect(deviceManaged.connected()).toEqual(false);
       done();
     });
@@ -114,8 +114,7 @@ describe('Device managed test', () => {
       done();
     });
     await device.init();
-    setTimeout(async () =>
-      await device.sendStatus({ test: 'test' }), 1000);
+    setTimeout(async () => await device.sendStatus({ test: 'test' }), 1000);
   });
 
   it('should send status by proxy', async done => {
@@ -140,7 +139,6 @@ describe('Device managed test', () => {
     await device.sendStatus({ test: 'test' });
   });
 
-
   it('should send action from proxy', async done => {
     testServer.on('connection', socket => {
       let deviceManaged = new DeviceManaged({
@@ -155,12 +153,12 @@ describe('Device managed test', () => {
       ]);
     });
     proxyTargetServer.on('connection', socket => {
-      socket.emit('testaction', { test: 'test' })
+      socket.emit('testaction', { test: 'test' });
     });
     await device.init();
     device.onAction('testaction', () => {
-      done()
-    })
+      done();
+    });
   });
 
   it('should send action from proxy target via deviceManaged', async done => {
@@ -181,11 +179,11 @@ describe('Device managed test', () => {
         socket,
         ...socket.handshake.query,
       });
-      deviceManaged.sendAction('testaction', { test: 'test' })
+      deviceManaged.sendAction('testaction', { test: 'test' });
     });
     await device.init();
     device.onAction('testaction', () => {
-      done()
-    })
+      done();
+    });
   });
 });

@@ -34,7 +34,7 @@ export default class Manager {
     (status: DeviceStatus) => void,
     TargetConfig
   > = new Map();
-  private proxySettings: DeviceProxyConfig[] = []
+  private proxySettings: DeviceProxyConfig[] = [];
   private onConnectionHandler?: (device: DeviceManaged) => void;
 
   constructor(config: ManagerConfig) {
@@ -83,7 +83,7 @@ export default class Manager {
   }
 
   public proxy(config: DeviceProxyConfig) {
-    this.proxySettings.push(config)
+    this.proxySettings.push(config);
     const found = this.findTargets(config);
     found.forEach(device => {
       device.addProxy(config.servers);
@@ -101,7 +101,7 @@ export default class Manager {
     });
     this.devices.push(device);
     this.setStatusHandlers(device);
-    this.setProxies(device)
+    this.setProxies(device);
 
     socket.on('disconnect', () => this.destroyDisconnectedDevice(socket));
 
@@ -113,9 +113,9 @@ export default class Manager {
   private setProxies(device: DeviceManaged) {
     this.proxySettings.forEach(config => {
       if (device.matchesTarget(config)) {
-        device.addProxy(config.servers)
+        device.addProxy(config.servers);
       }
-    })
+    });
   }
 
   private setStatusHandlers(device: DeviceManaged) {

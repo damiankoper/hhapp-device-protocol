@@ -67,16 +67,16 @@ export default class DeviceManaged {
           type: this.type,
         },
       });
-      this.initProxyMiddleware(client)
+      this.initProxyMiddleware(client);
       this.proxies.push(client);
     });
   }
 
   private initProxyMiddleware(proxy: SocketIOClient.Socket) {
-    this.patch(proxy)
+    this.patch(proxy);
     proxy.on('*', (event: { data: any[] }) => {
-      this.socket.emit(event.data.shift(), ...event.data)
-    })
+      this.socket.emit(event.data.shift(), ...event.data);
+    });
   }
 
   private emitStatusToProxies(status: DeviceStatus) {
@@ -90,6 +90,4 @@ export default class DeviceManaged {
       proxy.disconnect();
     });
   }
-
-
 }

@@ -38,9 +38,9 @@ describe('Manager test', () => {
       servers: [
         {
           host: 'localhost',
-          port: 2162
-        }
-      ]
+          port: 2162,
+        },
+      ],
     });
 
     managerTargetProxy.onConnection(() => {
@@ -59,9 +59,9 @@ describe('Manager test', () => {
       servers: [
         {
           host: 'localhost',
-          port: 2162
-        }
-      ]
+          port: 2162,
+        },
+      ],
     });
 
     managerTargetProxy.onConnection(() => {
