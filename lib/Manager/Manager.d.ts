@@ -17,7 +17,7 @@ export interface ActionConfig extends TargetConfig {
 export interface DeviceProxyConfig extends TargetConfig {
     servers: DeviceServerConfig[];
 }
-export default class Manager {
+export declare class Manager {
     private config;
     private socket;
     private devices;

@@ -47,7 +47,7 @@ describe('Manager test', () => {
   });
 
   it('should call device status handler', async done => {
-    let fn2 = jest.fn(() => { });
+    let fn2 = jest.fn(() => {});
     let fn = jest.fn((status: DeviceStatus) => {
       expect(fn).toBeCalled();
       expect(status.device.name).toMatch(/.{2}:.{2}:.{2}:.{2}:.{2}:.{2}/);
@@ -64,7 +64,7 @@ describe('Manager test', () => {
   });
 
   it('should call off device status handler after init', async done => {
-    let fn = jest.fn(() => { });
+    let fn = jest.fn(() => {});
 
     let device = await new Device(deviceConfig);
     await device.init();

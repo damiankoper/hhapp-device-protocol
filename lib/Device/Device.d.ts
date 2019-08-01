@@ -8,7 +8,7 @@ export interface DeviceConfig {
     type: string;
     servers: DeviceServerConfig[];
 }
-export default class Device {
+export declare class Device {
     sockets: SocketIOClient.Socket[];
     private macAddress;
     private config;
