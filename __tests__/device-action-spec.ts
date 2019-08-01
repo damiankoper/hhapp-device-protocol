@@ -1,4 +1,4 @@
-import Device from '../src/Device/Device';
+import { Device } from '../src/Device/Device';
 import SocketIO from 'socket.io';
 
 describe('Device test', () => {

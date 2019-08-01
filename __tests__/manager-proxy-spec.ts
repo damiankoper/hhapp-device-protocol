@@ -1,5 +1,5 @@
-import Manager from '../src/Manager/Manager';
-import Device, { DeviceConfig } from '../src/Device/Device';
+import { Manager } from '../src/Manager/Manager';
+import { Device, DeviceConfig } from '../src/Device/Device';
 
 describe('Manager test', () => {
   let manager: Manager;

@@ -25,7 +25,7 @@ export interface DeviceProxyConfig extends TargetConfig {
   servers: DeviceServerConfig[];
 }
 
-export default class Manager {
+export class Manager {
   private config: ManagerConfig;
   private socket: SocketIO.Server;
   private devices: DeviceManaged[] = [];

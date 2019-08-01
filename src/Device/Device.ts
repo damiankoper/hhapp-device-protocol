@@ -15,7 +15,7 @@ export interface DeviceConfig {
   servers: DeviceServerConfig[];
 }
 
-export default class Device {
+export class Device {
   public sockets: SocketIOClient.Socket[] = [];
   private macAddress!: string;
   private config: DeviceConfig;
