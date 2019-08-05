@@ -3,8 +3,7 @@ import { TargetConfig } from './Manager';
 import DeviceManaged from './DeviceManaged';
 
 
-export interface DeviceControllerManagedConfig {
-  target: TargetConfig,
+export interface DeviceControllerManagedConfig extends TargetConfig {
   socket: SocketIO.Socket
 }
 
@@ -14,8 +13,12 @@ export default class DeviceControllerManaged {
   private devices: DeviceManaged[]
 
   public constructor(config: DeviceControllerManagedConfig, devices: DeviceManaged[]) {
+
     this.socket = config.socket;
-    this.target = config.target;
+    this.target = {
+      name: config.name,
+      type: config.type
+    };
     this.devices = devices
     this.setEvents()
   }

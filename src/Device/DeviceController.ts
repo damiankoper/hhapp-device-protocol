@@ -10,7 +10,7 @@ export interface DeviceControllerConfig {
 }
 
 export class DeviceController {
-  private socket!: SocketIOClient.Socket;
+  private socket?: SocketIOClient.Socket;
   private config: DeviceControllerConfig;
 
   constructor(config: DeviceControllerConfig) {
@@ -41,6 +41,10 @@ export class DeviceController {
     });
   }
 
+  public getTargetConfig(): TargetConfig {
+    return this.config.target
+  }
+
   public destroy() {
     if (this.socket) {
       this.socket.disconnect();
@@ -48,10 +52,12 @@ export class DeviceController {
   }
 
   public onStatus(fn: (status: DeviceStatus) => void) {
-    this.socket.on('status', fn)
+    if (this.socket)
+      this.socket.on('status', fn)
   }
 
   public sendAction(action: string, payload: any) {
-    this.socket.emit(action, payload)
+    if (this.socket)
+      this.socket.emit(action, payload)
   }
 }

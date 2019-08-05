@@ -37,12 +37,25 @@ describe('Device controller test', () => {
     deviceController.init()
   })
 
-  /* it('should send action', async done => {
-    manager.on('testaction', (payload: any) => {
-      expect(payload.test).toEqual('test')
-      done()
+  it('should send action', async done => {
+    manager.on('connection', (socket) => {
+      socket.on('testaction', (payload: any) => {
+        expect(payload.test).toEqual('test')
+        done()
+      })
     })
     await deviceController.init()
     deviceController.sendAction('testaction', { test: 'test' })
-  }) */
+  })
+
+  it('should receive status', async done => {
+    let fn = jest.fn(()=>{
+      done()
+    })
+    manager.on('connection', (socket) => {
+      socket.emit('status', {})
+    })
+    await deviceController.init()
+    deviceController.onStatus(fn)
+  })
 });

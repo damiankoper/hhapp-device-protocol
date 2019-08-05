@@ -55,7 +55,7 @@ export class Manager {
     return this.devices;
   }
 
-  public getControllers(){
+  public getControllers() {
     return this.controllers
   }
 
@@ -110,7 +110,7 @@ export class Manager {
 
   private setDevice(socket: SocketIO.Socket) {
     const device = new DeviceManaged({
-      ...socket.handshake.query,
+      ...(socket.handshake.query),
       socket,
     });
     this.devices.push(device);
@@ -124,8 +124,8 @@ export class Manager {
 
   private setController(socket: SocketIO.Socket) {
     this.controllers.push(new DeviceControllerManaged({
+      ...(socket.handshake.query),
       socket,
-      ...socket.handshake.query
     }, this.devices))
   }
 
