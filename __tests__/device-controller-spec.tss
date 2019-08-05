@@ -12,11 +12,11 @@ describe('Device controller test', () => {
     },
     manager: {
       host: 'localhost',
-      port: 2190,
+      port: 2135,
     },
   };
   beforeEach(done => {
-    manager.listen(2190);
+    manager.listen(2135);
     deviceController = new DeviceController(deviceControllerConfig);
     done();
   });
@@ -28,6 +28,8 @@ describe('Device controller test', () => {
   });
 
   it('should init', () => {
+    manager.on('connection', () => {
+    })
     expect(deviceController).toBeInstanceOf(DeviceController);
   });
 

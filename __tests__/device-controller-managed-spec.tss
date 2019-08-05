@@ -13,11 +13,11 @@ describe('Device controller managed test', () => {
     },
     manager: {
       host: 'localhost',
-      port: 2191,
+      port: 2133,
     },
   };
   beforeEach(done => {
-    manager.listen(2191);
+    manager.listen(2133);
     deviceController = new DeviceController(deviceControllerConfig);
     done();
   });
