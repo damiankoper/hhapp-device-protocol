@@ -2,8 +2,8 @@ import SocketIO from 'socket.io';
 
 import { DeviceServerConfig } from '../Device/Device';
 import { DeviceStatus } from '../Device/Status';
-import DeviceManaged from './DeviceManaged';
 import DeviceControllerManaged from './DeviceControllerManaged';
+import DeviceManaged from './DeviceManaged';
 
 type MacAddress = string;
 type DeviceType = string;
@@ -56,7 +56,7 @@ export class Manager {
   }
 
   public getControllers() {
-    return this.controllers
+    return this.controllers;
   }
 
   public onConnection(fn: (device: DeviceManaged) => void) {
@@ -91,15 +91,17 @@ export class Manager {
     return this.devices.filter(d => d.matchesTarget(targetConfig));
   }
 
-  private findTargetControllers(targetConfig: TargetConfig): DeviceControllerManaged[] {
+  private findTargetControllers(
+    targetConfig: TargetConfig
+  ): DeviceControllerManaged[] {
     return this.controllers.filter(d => d.matchesTarget(targetConfig));
   }
 
   private initConnectedDevice(socket: SocketIO.Socket) {
     if (socket.handshake.query.controller) {
-      this.setController(socket)
+      this.setController(socket);
     } else {
-      this.setDevice(socket)
+      this.setDevice(socket);
     }
   }
 
@@ -110,7 +112,7 @@ export class Manager {
 
   private setDevice(socket: SocketIO.Socket) {
     const device = new DeviceManaged({
-      ...(socket.handshake.query),
+      ...socket.handshake.query,
       socket,
     });
     this.devices.push(device);
@@ -123,10 +125,15 @@ export class Manager {
   }
 
   private setController(socket: SocketIO.Socket) {
-    this.controllers.push(new DeviceControllerManaged({
-      ...(socket.handshake.query),
-      socket,
-    }, this.devices))
+    this.controllers.push(
+      new DeviceControllerManaged(
+        {
+          ...socket.handshake.query,
+          socket,
+        },
+        this.devices
+      )
+    );
   }
 
   private setStatusHandlers(device: DeviceManaged) {
@@ -136,11 +143,12 @@ export class Manager {
       }
     });
 
-    device.onStatus((status => {
-      this.findTargetControllers(device.getTargetConfig())
-        .forEach(controller => {
-          controller.sendStatus(status)
-        })
-    }));
+    device.onStatus(status => {
+      this.findTargetControllers(device.getTargetConfig()).forEach(
+        controller => {
+          controller.sendStatus(status);
+        }
+      );
+    });
   }
 }

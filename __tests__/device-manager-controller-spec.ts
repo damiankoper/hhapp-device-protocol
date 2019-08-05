@@ -1,13 +1,16 @@
-import { DeviceControllerConfig, DeviceController } from "../src/Device/DeviceController"
-import { Manager } from "../src/Manager/Manager";
-import { Device } from "../src/Device/Device";
+import {
+  DeviceControllerConfig,
+  DeviceController,
+} from '../src/Device/DeviceController';
+import { Manager } from '../src/Manager/Manager';
+import { Device } from '../src/Device/Device';
 describe('Device with controller through manager', () => {
-  let manager: Manager
-  let device: Device
-  let deviceController: DeviceController
+  let manager: Manager;
+  let device: Device;
+  let deviceController: DeviceController;
   let deviceControllerConfig: DeviceControllerConfig = {
     target: {
-      type: 'testtype'
+      type: 'testtype',
     },
     manager: {
       host: 'localhost',
@@ -15,45 +18,46 @@ describe('Device with controller through manager', () => {
     },
   };
   beforeEach(done => {
-    manager = new Manager({ port: 2199 })
-    device = new Device({ servers: [{ host: 'localhost', port: 2199 }], type: 'testtype' })
-    deviceController = new DeviceController(deviceControllerConfig)
+    manager = new Manager({ port: 2199 });
+    device = new Device({
+      servers: [{ host: 'localhost', port: 2199 }],
+      type: 'testtype',
+    });
+    deviceController = new DeviceController(deviceControllerConfig);
     done();
   });
 
   afterEach(done => {
-    device.destroy()
+    device.destroy();
     deviceController.destroy();
-    manager.destroy()
+    manager.destroy();
     done();
   });
 
   it('should connect to manager', async () => {
-    await deviceController.init()
-    await device.init()
-    expect(manager.getDevices()).toHaveLength(1)
-    expect(manager.getControllers()).toHaveLength(1)
-  })
+    await deviceController.init();
+    await device.init();
+    expect(manager.getDevices()).toHaveLength(1);
+    expect(manager.getControllers()).toHaveLength(1);
+  });
 
   it('should connect to manager and send status', async done => {
-    await deviceController.init()
+    await deviceController.init();
     deviceController.onStatus(() => {
-      done()
-    })
+      done();
+    });
 
-    await device.init()
-    device.sendStatus({ test: 'test' })
-
-  })
+    await device.init();
+    device.sendStatus({ test: 'test' });
+  });
 
   it('should connect to manager and send status', async done => {
-    await deviceController.init()
-    await device.init()
+    await deviceController.init();
+    await device.init();
     device.onAction('testaction', () => {
-      done()
-    })
+      done();
+    });
 
-    deviceController.sendAction('testaction', {test:'test'})
-})
-
+    deviceController.sendAction('testaction', { test: 'test' });
+  });
 });

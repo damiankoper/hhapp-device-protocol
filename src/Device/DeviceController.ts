@@ -1,12 +1,12 @@
 import io from 'socket.io-client';
-import { DeviceStatus } from './Status';
 import { DeviceServerConfig } from './Device';
-import { TargetConfig } from '../Manager/Manager';
+import { DeviceStatus } from './Status';
 export { DeviceStatus } from './Status';
+import { TargetConfig } from '../Manager/Manager';
 
 export interface DeviceControllerConfig {
-  target: TargetConfig,
-  manager: DeviceServerConfig
+  target: TargetConfig;
+  manager: DeviceServerConfig;
 }
 
 export class DeviceController {
@@ -18,31 +18,33 @@ export class DeviceController {
   }
 
   public async init() {
-    this.socket = await new Promise<SocketIOClient.Socket>((resolve, reject) => {
-      const serverConfig = this.config.manager
-      const socket = io.connect(
-        `http://${serverConfig.host}:${serverConfig.port}`,
-        {
-          query: {
-            controller: true,
-            ...this.config.target,
-          },
-        }
-      );
-      socket.once('connect', () => {
-        resolve(socket);
-      });
-      socket.once('connect_error', (err: string) => {
-        reject(new Error(err));
-      });
-      socket.once('connect_timeout', (err: string) => {
-        reject(new Error(err));
-      });
-    });
+    this.socket = await new Promise<SocketIOClient.Socket>(
+      (resolve, reject) => {
+        const serverConfig = this.config.manager;
+        const socket = io.connect(
+          `http://${serverConfig.host}:${serverConfig.port}`,
+          {
+            query: {
+              controller: true,
+              ...this.config.target,
+            },
+          }
+        );
+        socket.once('connect', () => {
+          resolve(socket);
+        });
+        socket.once('connect_error', (err: string) => {
+          reject(new Error(err));
+        });
+        socket.once('connect_timeout', (err: string) => {
+          reject(new Error(err));
+        });
+      }
+    );
   }
 
   public getTargetConfig(): TargetConfig {
-    return this.config.target
+    return this.config.target;
   }
 
   public destroy() {
@@ -52,12 +54,14 @@ export class DeviceController {
   }
 
   public onStatus(fn: (status: DeviceStatus) => void) {
-    if (this.socket)
-      this.socket.on('status', fn)
+    if (this.socket) {
+      this.socket.on('status', fn);
+    }
   }
 
   public sendAction(action: string, payload: any) {
-    if (this.socket)
-      this.socket.emit(action, payload)
+    if (this.socket) {
+      this.socket.emit(action, payload);
+    }
   }
 }

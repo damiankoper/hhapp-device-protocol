@@ -27,9 +27,9 @@ export default class DeviceManaged {
 
   public getTargetConfig(): TargetConfig {
     return {
+      name: this.name,
       type: this.type,
-      name: this.name
-    }
+    };
   }
 
   public matchesTarget(target: TargetConfig) {

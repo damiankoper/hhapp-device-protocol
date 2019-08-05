@@ -1,26 +1,27 @@
 import { DeviceStatus } from '../Device/Status';
-import { TargetConfig } from './Manager';
 import DeviceManaged from './DeviceManaged';
-
+import { TargetConfig } from './Manager';
 
 export interface DeviceControllerManagedConfig extends TargetConfig {
-  socket: SocketIO.Socket
+  socket: SocketIO.Socket;
 }
 
 export default class DeviceControllerManaged {
-  private target: TargetConfig
+  private target: TargetConfig;
   private socket: SocketIO.Socket;
-  private devices: DeviceManaged[]
+  private devices: DeviceManaged[];
 
-  public constructor(config: DeviceControllerManagedConfig, devices: DeviceManaged[]) {
-
+  public constructor(
+    config: DeviceControllerManagedConfig,
+    devices: DeviceManaged[]
+  ) {
     this.socket = config.socket;
     this.target = {
       name: config.name,
-      type: config.type
+      type: config.type,
     };
-    this.devices = devices
-    this.setEvents()
+    this.devices = devices;
+    this.setEvents();
   }
 
   public getSocket() {
@@ -32,7 +33,7 @@ export default class DeviceControllerManaged {
   }
 
   public sendStatus(status: DeviceStatus) {
-    this.socket.emit('status', status)
+    this.socket.emit('status', status);
   }
 
   public connected(): boolean {
@@ -48,11 +49,11 @@ export default class DeviceControllerManaged {
       if (packet[0] !== 'status') {
         this.devices.forEach(device => {
           if (device.matchesTarget(this.target)) {
-            device.sendAction(packet[0], packet[1])
+            device.sendAction(packet[0], packet[1]);
           }
-        })
+        });
       }
-      next()
-    })
+      next();
+    });
   }
 }
