@@ -28,13 +28,13 @@ describe('Device controller test', () => {
     expect(deviceController).toBeInstanceOf(DeviceController);
   });
 
-  it('should connect to manager', done => {
+  it('should connect to manager', async done => {
     manager.on('connection', socket => {
       expect(socket.handshake.query.controller).toBeTruthy()
       expect(socket.handshake.query.type).toEqual('testtype')
       done()
     })
-    deviceController.init()
+    await deviceController.init()
   })
 
   it('should send action', async done => {
