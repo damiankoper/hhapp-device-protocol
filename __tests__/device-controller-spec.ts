@@ -1,0 +1,48 @@
+import { DeviceControllerConfig, DeviceController } from "../src/Device/DeviceController"
+import SocketIO from 'socket.io'
+describe('Device controller test', () => {
+  let manager: SocketIO.Server = SocketIO()
+  let deviceController: DeviceController
+  let deviceControllerConfig: DeviceControllerConfig = {
+    target: {
+      type: 'testtype'
+    },
+    manager: {
+      host: 'localhost',
+      port: 2190,
+    },
+  };
+  beforeEach(done => {
+    manager.listen(2190)
+    deviceController = new DeviceController(deviceControllerConfig)
+    done();
+  });
+
+  afterEach(done => {
+    deviceController.destroy();
+    manager.close()
+    done();
+  });
+
+  it('should init', async () => {
+    expect(deviceController).toBeInstanceOf(DeviceController);
+  });
+
+  it('should connect to manager', done => {
+    manager.on('connection', socket => {
+      expect(socket.handshake.query.controller).toBeTruthy()
+      expect(socket.handshake.query.type).toEqual('testtype')
+      done()
+    })
+    deviceController.init()
+  })
+
+  /* it('should send action', async done => {
+    manager.on('testaction', (payload: any) => {
+      expect(payload.test).toEqual('test')
+      done()
+    })
+    await deviceController.init()
+    deviceController.sendAction('testaction', { test: 'test' })
+  }) */
+});

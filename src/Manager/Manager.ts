@@ -3,6 +3,7 @@ import SocketIO from 'socket.io';
 import { DeviceServerConfig } from '../Device/Device';
 import { DeviceStatus } from '../Device/Status';
 import DeviceManaged from './DeviceManaged';
+import DeviceControllerManaged from './DeviceControllerManaged';
 
 type MacAddress = string;
 type DeviceType = string;
@@ -29,12 +30,12 @@ export class Manager {
   private config: ManagerConfig;
   private socket: SocketIO.Server;
   private devices: DeviceManaged[] = [];
+  private controllers: DeviceControllerManaged[] = [];
 
   private statusHandlers: Map<
     (status: DeviceStatus) => void,
     TargetConfig
   > = new Map();
-  private proxySettings: DeviceProxyConfig[] = [];
   private onConnectionHandler?: (device: DeviceManaged) => void;
 
   constructor(config: ManagerConfig) {
@@ -52,6 +53,10 @@ export class Manager {
 
   public getDevices() {
     return this.devices;
+  }
+
+  public getControllers(){
+    return this.controllers
   }
 
   public onConnection(fn: (device: DeviceManaged) => void) {
@@ -82,27 +87,34 @@ export class Manager {
     });
   }
 
-  public proxy(config: DeviceProxyConfig) {
-    this.proxySettings.push(config);
-    const found = this.findTargets(config);
-    found.forEach(device => {
-      device.addProxy(config.servers);
-    });
-  }
-
   private findTargets(targetConfig: TargetConfig): DeviceManaged[] {
     return this.devices.filter(d => d.matchesTarget(targetConfig));
   }
 
+  private findTargetControllers(targetConfig: TargetConfig): DeviceControllerManaged[] {
+    return this.controllers.filter(d => d.matchesTarget(targetConfig));
+  }
+
   private initConnectedDevice(socket: SocketIO.Socket) {
+    if (socket.handshake.query.controller) {
+      this.setController(socket)
+    } else {
+      this.setDevice(socket)
+    }
+  }
+
+  private destroyDisconnectedDevice(socket: SocketIO.Socket) {
+    const found = this.devices.findIndex(d => d.getSocket() === socket);
+    this.devices.splice(found, 1);
+  }
+
+  private setDevice(socket: SocketIO.Socket) {
     const device = new DeviceManaged({
       ...socket.handshake.query,
       socket,
     });
     this.devices.push(device);
     this.setStatusHandlers(device);
-    this.setProxies(device);
-
     socket.on('disconnect', () => this.destroyDisconnectedDevice(socket));
 
     if (this.onConnectionHandler) {
@@ -110,12 +122,11 @@ export class Manager {
     }
   }
 
-  private setProxies(device: DeviceManaged) {
-    this.proxySettings.forEach(config => {
-      if (device.matchesTarget(config)) {
-        device.addProxy(config.servers);
-      }
-    });
+  private setController(socket: SocketIO.Socket) {
+    this.controllers.push(new DeviceControllerManaged({
+      socket,
+      ...socket.handshake.query
+    }, this.devices))
   }
 
   private setStatusHandlers(device: DeviceManaged) {
@@ -124,10 +135,12 @@ export class Manager {
         device.onStatus(fn);
       }
     });
-  }
 
-  private destroyDisconnectedDevice(socket: SocketIO.Socket) {
-    const found = this.devices.findIndex(d => d.getSocket() === socket);
-    this.devices.splice(found, 1);
+    device.onStatus((status => {
+      this.findTargetControllers(device.getTargetConfig())
+        .forEach(controller => {
+          controller.sendStatus(status)
+        })
+    }));
   }
 }
