@@ -1,4 +1,4 @@
-import { DeviceControllerConfig, DeviceController } from "../src/Device/DeviceController"
+/* import { DeviceControllerConfig, DeviceController } from "../src/Device/DeviceController"
 import SocketIO from 'socket.io'
 describe('Device controller test', () => {
   let manager: SocketIO.Server = SocketIO()
@@ -59,3 +59,4 @@ describe('Device controller test', () => {
     deviceController.onStatus(fn)
   })
 });
+ */
