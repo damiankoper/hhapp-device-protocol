@@ -5,13 +5,10 @@ import SocketIO from 'socket.io';
 describe('Device managed test', () => {
   let device: Device;
   let testServer: SocketIO.Server;
-  let proxyTargetServer: SocketIO.Server;
 
   beforeEach(done => {
     testServer = SocketIO();
     testServer.listen(2150);
-    proxyTargetServer = SocketIO();
-    proxyTargetServer.listen(2152);
 
     device = new Device({
       type: 'testdevice',
@@ -27,7 +24,6 @@ describe('Device managed test', () => {
 
   afterEach(done => {
     testServer.close();
-    proxyTargetServer.close();
 
     device.destroy();
     done();
