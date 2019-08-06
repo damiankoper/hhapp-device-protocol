@@ -45,41 +45,40 @@ describe('Device controller managed test', () => {
     await deviceController.init();
   });
 
-   it('should send status', async done => {
-      manager.on('connection', socket => {
-        let deviceControllerManaged = new DeviceControllerManaged(
-          {
-            socket,
-            ...deviceController.getTargetConfig(),
-          },
-          []
-        );
-        deviceControllerManaged.sendStatus({
-          device: { type: 'testtype', name: 'testname' },
-          payload: {},
-        });
-        deviceControllerManaged.destroy();
-        expect(deviceControllerManaged.connected()).toBeFalsy();
+  it('should send status', async done => {
+    manager.on('connection', socket => {
+      let deviceControllerManaged = new DeviceControllerManaged(
+        {
+          socket,
+          ...deviceController.getTargetConfig(),
+        },
+        []
+      );
+      deviceControllerManaged.sendStatus({
+        device: { type: 'testtype', name: 'testname' },
+        payload: {},
       });
-      await deviceController.init();
-      deviceController.onStatus(status => {
-        expect(status.device.name).toEqual('testname');
-        done();
-      });
-    });
 
-    it('should send status', async done => {
-      manager.on('connection', socket => {
-        let deviceControllerManaged = new DeviceControllerManaged(
-          {
-            socket,
-            ...deviceController.getTargetConfig(),
-          },
-          []
-        );
-        expect(socket).toStrictEqual(deviceControllerManaged.getSocket());
-        done();
-      });
-      await deviceController.init();
     });
+    await deviceController.init();
+    deviceController.onStatus(status => {
+      expect(status.device.name).toEqual('testname');
+      done();
+    });
+  });
+
+  it('should send status', async done => {
+    manager.on('connection', socket => {
+      let deviceControllerManaged = new DeviceControllerManaged(
+        {
+          socket,
+          ...deviceController.getTargetConfig(),
+        },
+        []
+      );
+      expect(socket).toStrictEqual(deviceControllerManaged.getSocket());
+      done();
+    });
+    await deviceController.init();
+  });
 });
