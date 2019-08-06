@@ -45,7 +45,7 @@ describe('Device controller managed test', () => {
     await deviceController.init();
   });
 
-  /*   it('should send status', async done => {
+   it('should send status', async done => {
       manager.on('connection', socket => {
         let deviceControllerManaged = new DeviceControllerManaged(
           {
@@ -67,7 +67,7 @@ describe('Device controller managed test', () => {
         done();
       });
     });
-
+/*
     it('should send status', async done => {
       manager.on('connection', socket => {
         let deviceControllerManaged = new DeviceControllerManaged(
