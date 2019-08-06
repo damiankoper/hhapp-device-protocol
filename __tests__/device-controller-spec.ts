@@ -28,8 +28,7 @@ describe('Device controller test', () => {
   });
 
   it('should init', () => {
-    manager.on('connection', () => {
-    })
+    manager.on('connection', () => {});
     expect(deviceController).toBeInstanceOf(DeviceController);
   });
 

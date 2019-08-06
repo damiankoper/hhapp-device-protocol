@@ -29,7 +29,6 @@ describe('Device controller managed test', () => {
   });
 
   it('should init', async done => {
-    done()
     manager.on('connection', socket => {
       let deviceControllerManaged = new DeviceControllerManaged(
         {
@@ -58,27 +57,13 @@ describe('Device controller managed test', () => {
         device: { type: 'testtype', name: 'testname' },
         payload: {},
       });
-
+      deviceControllerManaged.destroy();
+      expect(deviceControllerManaged.connected()).toBeFalsy();
     });
     await deviceController.init();
     deviceController.onStatus(status => {
       expect(status.device.name).toEqual('testname');
       done();
     });
-  });
-
-  it('should send status', async done => {
-    manager.on('connection', socket => {
-      let deviceControllerManaged = new DeviceControllerManaged(
-        {
-          socket,
-          ...deviceController.getTargetConfig(),
-        },
-        []
-      );
-      expect(socket).toStrictEqual(deviceControllerManaged.getSocket());
-      done();
-    });
-    await deviceController.init();
   });
 });
